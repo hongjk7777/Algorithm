@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Main {
+public class BaekJoon_14503 {
 
     private static int row, column, robotX, robotY, robotDir;
     private static int[][] map = new int[52][52];
@@ -73,7 +73,6 @@ public class Main {
                 }
             }
 
-            return;
         }
 
         private void changeDir() {
