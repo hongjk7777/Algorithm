@@ -7,7 +7,7 @@ public class BaekJoon_14891 {
     private static int[][] gear = new int[4][8];
     private static int moveNum;
     private static int[][] move = new int[100][2];
-    private static int[] moveAlready = new int[4];
+    private static int[] spinedGear = new int[4];
 
     public static void main(String[] args) {
         getInput();
@@ -35,27 +35,27 @@ public class BaekJoon_14891 {
         for (int i = 0; i < moveNum; i++) {
             int gearNum = move[i][0];
             int dir = move[i][1];
-            Arrays.fill(moveAlready, 0);
+            Arrays.fill(spinedGear, 0);
             if (dir == 1) {
-                spinRightGear(gearNum);
+                spinClockWise(gearNum);
             }
             if (dir == -1) {
-                spinLeftGear(gearNum);
+                spinCounterClockWise(gearNum);
             }
         }
     }
 
-    private static void spinRightGear(int gearNum) {
+    private static void spinClockWise(int gearNum) {
         if (!isRightGearSamePole(gearNum)) {
-            if (moveAlready[gearNum + 1] != 1) {
-                moveAlready[gearNum] = 1;
-                spinLeftGear(gearNum + 1);
+            if (spinedGear[gearNum + 1] != 1) {
+                spinedGear[gearNum] = 1;
+                spinCounterClockWise(gearNum + 1);
             }
         }
         if (!isLeftGearSamePole(gearNum)) {
-            if (moveAlready[gearNum - 1] != 1) {
-                moveAlready[gearNum] = 1;
-                spinLeftGear(gearNum - 1);
+            if (spinedGear[gearNum - 1] != 1) {
+                spinedGear[gearNum] = 1;
+                spinCounterClockWise(gearNum - 1);
             }
         }
         int[] temp = Arrays.stream(gear[gearNum]).toArray();
@@ -64,17 +64,17 @@ public class BaekJoon_14891 {
         }
     }
 
-    private static void spinLeftGear(int gearNum) {
+    private static void spinCounterClockWise(int gearNum) {
         if (!isRightGearSamePole(gearNum)) {
-            if (moveAlready[gearNum + 1] != 1) {
-                moveAlready[gearNum] = 1;
-                spinRightGear(gearNum + 1);
+            if (spinedGear[gearNum + 1] != 1) {
+                spinedGear[gearNum] = 1;
+                spinClockWise(gearNum + 1);
             }
         }
         if (!isLeftGearSamePole(gearNum)) {
-            if (moveAlready[gearNum - 1] != 1) {
-                moveAlready[gearNum] = 1;
-                spinRightGear(gearNum - 1);
+            if (spinedGear[gearNum - 1] != 1) {
+                spinedGear[gearNum] = 1;
+                spinClockWise(gearNum - 1);
             }
         }
 
