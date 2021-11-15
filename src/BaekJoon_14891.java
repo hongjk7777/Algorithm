@@ -89,10 +89,7 @@ public class BaekJoon_14891 {
             return true;
         }
 
-        if (gear[gearNum][2] == gear[gearNum + 1][6]) {
-            return true;
-        }
-        return false;
+        return gear[gearNum][2] == gear[gearNum + 1][6];
     }
 
     private static boolean isLeftGearSamePole(int gearNum) {
@@ -100,11 +97,7 @@ public class BaekJoon_14891 {
             return true;
         }
 
-        if (gear[gearNum][6] == gear[gearNum - 1][2]) {
-            return true;
-        }
-
-        return false;
+        return gear[gearNum][6] == gear[gearNum - 1][2];
     }
 
 
