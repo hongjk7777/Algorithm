@@ -8,12 +8,14 @@ public class BaekJoon_15684 {
 
     public static void main(String[] args) {
         getInput();
-        rigLadderGame(3, rowLine);
-        if (min > 3) {
-            min = -1;
+        if (isAvailable()) {
+            rigLadderGame(3, rowLine);
         }
+        checkOver3();
         System.out.println(min);
     }
+
+
 
     private static void getInput() {
         Scanner scanner = new Scanner(System.in);
@@ -27,14 +29,39 @@ public class BaekJoon_15684 {
         }
     }
 
+    private static boolean isAvailable() {
+        boolean able = true;
+        int count = 0;
+
+        for (int i = 0; i < columnAmount; i++) {
+            if (getResultOfColumn(i) != i) {
+                count++;
+            }
+        }
+
+        if (count > 6) {
+            able = false;
+        }
+
+        return able;
+    }
+
+
 
     private static void rigLadderGame(int leftLadder, int[][] rowLine) {
         //1을 찾앗으면 2는 x 알골
+
         if (min <= 3 - leftLadder) {
+
             return;
         }
 
-        if (rigSuccess(rowLine)) {
+//        if (min <= 3 - leftLadder || maxAnswer <= 3 - leftLadder || finish) {
+//
+//            return;
+//        }
+
+        if (rigSuccess()) {
             int usedLadder = 3 - leftLadder;
             if (usedLadder < min) {
                 min = usedLadder;
@@ -52,7 +79,7 @@ public class BaekJoon_15684 {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < columnAmount - 1; j++) {
 
-                if (isPlaceable(i, j, rowLine) && rowLine[i][j] != 1) {
+                if (isPlaceable(i, j) && rowLine[i][j] != 1) {
                     rowLine[i][j] = 1;
                     rigLadderGame(leftLadder - 1, rowLine);
                     rowLine[i][j] = 0;
@@ -64,11 +91,11 @@ public class BaekJoon_15684 {
     }
 
 
-    private static boolean rigSuccess(int[][] rowLine) {
+    private static boolean rigSuccess() {
         boolean rig = true;
 
         for (int i = 0; i < columnAmount; i++) {
-            if (getResultOfColumn(i, rowLine) != i) {
+            if (getResultOfColumn(i) != i) {
                 rig = false;
                 break;
             }
@@ -76,7 +103,7 @@ public class BaekJoon_15684 {
         return rig;
     }
 
-    private static int getResultOfColumn(int columnNum, int[][] rowLine) {
+    private static int getResultOfColumn(int columnNum) {
         int curColumn = columnNum; //column can change every height
 
         for (int i = 0; i < height; i++) {
@@ -93,13 +120,18 @@ public class BaekJoon_15684 {
         return curColumn;
     }
 
-    private static boolean isPlaceable(int height, int column, int[][] ladder) {
-        boolean placeable = column + 1 >= columnAmount - 1 || ladder[height][column + 1] != 1;
+    private static boolean isPlaceable(int height, int column) {
+        boolean placeable = column + 1 >= columnAmount - 1 || rowLine[height][column + 1] != 1;
 
-        if (column > 0 && ladder[height][column - 1] == 1) {
+        if (column > 0 && rowLine[height][column - 1] == 1) {
             placeable = false;
         }
         return placeable;
     }
 
+    private static void checkOver3() {
+        if (min > 3) {
+            min = -1;
+        }
+    }
 }
