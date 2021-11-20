@@ -51,12 +51,11 @@ public class BaekJoon_15684 {
         //for statement
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < columnAmount - 1; j++) {
-                int[][] clone = new int[30][9];
-                copyArray(rowLine, clone);
 
-                if (isPlaceable(i, j, clone) && clone[i][j] != 1) {
-                    clone[i][j] = 1;
-                    rigLadderGame(leftLadder - 1, clone);
+                if (isPlaceable(i, j, rowLine) && rowLine[i][j] != 1) {
+                    rowLine[i][j] = 1;
+                    rigLadderGame(leftLadder - 1, rowLine);
+                    rowLine[i][j] = 0;
                 }
             }
         }
@@ -67,10 +66,9 @@ public class BaekJoon_15684 {
 
     private static boolean rigSuccess(int[][] rowLine) {
         boolean rig = true;
-        int[][] cache = new int[30][9];
 
         for (int i = 0; i < columnAmount; i++) {
-            if (getResultOfColumn(i, rowLine, cache) != i) {
+            if (getResultOfColumn(i, rowLine) != i) {
                 rig = false;
                 break;
             }
@@ -78,7 +76,7 @@ public class BaekJoon_15684 {
         return rig;
     }
 
-    private static int getResultOfColumn(int columnNum, int[][] rowLine, int[][] cache) {
+    private static int getResultOfColumn(int columnNum, int[][] rowLine) {
         int curColumn = columnNum; //column can change every height
 
         for (int i = 0; i < height; i++) {
@@ -94,15 +92,6 @@ public class BaekJoon_15684 {
 
         return curColumn;
     }
-
-    private static void copyArray(int[][] src, int[][] dest) {
-        for (int i = 0; i < 30; i++) {
-            for (int j = 0; j < 9; j++) {
-                dest[i][j] = src[i][j];
-            }
-        }
-    }
-
 
     private static boolean isPlaceable(int height, int column, int[][] ladder) {
         boolean placeable = column + 1 >= columnAmount - 1 || ladder[height][column + 1] != 1;
