@@ -9,11 +9,11 @@ public class BaekJoon_5373 {
     private static int testCaseAmount;
     private static int[] spinAmount = new int[100];
     private static String[][] cube = new String[6][CUBE_SIZE * CUBE_SIZE];
-    private static int[][][] spin = new int[4][1000][2];
+    private static int[][][] spin = new int[100][1000][2];
     // 1st testcaseNum 2nd spinNum 3rd 0:spinDir 1:spinSide
 
     public static void main(String[] args) {
-        paintCube();
+        resetCube();
         getInput();
         for (int i = 0; i < testCaseAmount; i++) {
             spinAllCube(spin[i], i);
@@ -22,7 +22,7 @@ public class BaekJoon_5373 {
         }
     }
 
-    private static void paintCube() {
+    private static void resetCube() {
         Arrays.fill(cube[UP_SIDE], "w");
         Arrays.fill(cube[DOWN_SIDE], "y");
         Arrays.fill(cube[FORWARD_SIDE], "r");
@@ -40,8 +40,8 @@ public class BaekJoon_5373 {
             scanner.nextLine();
             for (int j = 0; j < spinAmount[i]; j++) {
                 String input = scanner.next();
-                spin[i][j][0] = getSpinDir(input.charAt(0));
-                spin[i][j][1] = getCubeSide(input.charAt(1));
+                spin[i][j][0] = getCubeSide(input.charAt(0));
+                spin[i][j][1] = getSpinDir(input.charAt(1));
             }
         }
     }
@@ -77,183 +77,242 @@ public class BaekJoon_5373 {
     }
 
     private static void spinCube(int[] spin) {
+        spinAxisCube(spin);
         if (spin[0] == UP_SIDE) {
-            spinCubeSide(UP_SIDE, spin[1]);
+            spinSideCube(UP_SIDE, spin[1]);
         } else if (spin[0] == DOWN_SIDE) {
-            spinCubeSide(DOWN_SIDE, spin[1]);
+            spinSideCube(DOWN_SIDE, spin[1]);
         } else if (spin[0] == FORWARD_SIDE) {
-            spinCubeSide(FORWARD_SIDE, spin[1]);
+            spinSideCube(FORWARD_SIDE, spin[1]);
         } else if (spin[0] == BACK_SIDE) {
-            spinCubeSide(BACK_SIDE, spin[1]);
+            spinSideCube(BACK_SIDE, spin[1]);
         } else if (spin[0] == LEFT_SIDE) {
-            spinCubeSide(LEFT_SIDE, spin[1]);
+            spinSideCube(LEFT_SIDE, spin[1]);
         } else {
-            spinCubeSide(RIGHT_SIDE, spin[1]);
+            spinSideCube(RIGHT_SIDE, spin[1]);
         }
     }
 
-    private static void spinCubeSide(int cubeSide, int dir) {
-        String[][] spinElement = new String[4][3];
+    private static void spinAxisCube(int[] spin) {
+        int axisSide = spin[0];
+        int dir = spin[1];
+
+        String[] temp = new String[9];
+        System.arraycopy(cube[axisSide], 0, temp, 0, 9);
+
+        if (dir == 0) {
+            cube[axisSide][0] = temp[2];
+            cube[axisSide][1] = temp[5];
+            cube[axisSide][2] = temp[8];
+            cube[axisSide][3] = temp[1];
+            cube[axisSide][4] = temp[4];
+            cube[axisSide][5] = temp[7];
+            cube[axisSide][6] = temp[0];
+            cube[axisSide][7] = temp[3];
+            cube[axisSide][8] = temp[6];
+        } else {
+            cube[axisSide][0] = temp[6];
+            cube[axisSide][1] = temp[3];
+            cube[axisSide][2] = temp[0];
+            cube[axisSide][3] = temp[7];
+            cube[axisSide][4] = temp[4];
+            cube[axisSide][5] = temp[1];
+            cube[axisSide][6] = temp[8];
+            cube[axisSide][7] = temp[5];
+            cube[axisSide][8] = temp[2];
+        }
+    }
+
+    private static void spinSideCube(int cubeSide, int dir) {
+        int[][] spinElement = new int[4][3];
+        int[] spinSide = new int[4];
 
         int[] temp = new int[3];
-        for (int i = 1; i < 5; i++) {
+        for (int i = 1; i < 6; i++) {
             int curSide = (i + cubeSide) % 6;
-            if (curSide != cubeSide) {
+            if (curSide + cubeSide == 5) {
                 continue;
             }
-
-            getSpinElement(spinElement, cubeSide, curSide);
+            getSpinElement(spinElement, cubeSide, curSide, spinSide);
         }
 
         if (dir == 0) {
-            spinCounterClockwise(spinElement);
+            spinCounterClockwise(spinElement, spinSide);
         } else {
-            spinClockwise(spinElement);
+            spinClockwise(spinElement, spinSide);
         }
+
     }
 
 
 
-    private static void getSpinElement(String[][] spinElement, int axisSide, int curSide) {
-
+    private static int getSpinElement(int[][] spinElement, int axisSide, int curSide, int[] spinSide) {
         if (axisSide == UP_SIDE) {
             if (curSide == LEFT_SIDE) {
-                spinElement[0][0] = cube[curSide][2];
-                spinElement[0][1] = cube[curSide][1];
-                spinElement[0][2] = cube[curSide][0];
+                spinElement[0][0] = 0;
+                spinElement[0][1] = 1;
+                spinElement[0][2] = 2;
+                spinSide[0] = curSide;
             } else if (curSide == RIGHT_SIDE) {
-                spinElement[2][0] = cube[curSide][2];
-                spinElement[2][1] = cube[curSide][1];
-                spinElement[2][2] = cube[curSide][0];
+                spinElement[2][0] = 0;
+                spinElement[2][1] = 1;
+                spinElement[2][2] = 2;
+                spinSide[2] = curSide;
             } else if (curSide == FORWARD_SIDE) {
-                spinElement[1][0] = cube[curSide][2];
-                spinElement[1][1] = cube[curSide][1];
-                spinElement[1][2] = cube[curSide][0];
+                spinElement[3][0] = 0;
+                spinElement[3][1] = 1;
+                spinElement[3][2] = 2;
+                spinSide[3] = curSide;
             } else {
-                spinElement[3][0] = cube[curSide][2];
-                spinElement[3][1] = cube[curSide][1];
-                spinElement[3][2] = cube[curSide][0];
+                spinElement[1][0] = 0;
+                spinElement[1][1] = 1;
+                spinElement[1][2] = 2;
+                spinSide[1] = curSide;
             }
         } else if (axisSide == DOWN_SIDE) {
             if (curSide == LEFT_SIDE) {
-                spinElement[0][0] = cube[curSide][8];
-                spinElement[0][1] = cube[curSide][7];
-                spinElement[0][2] = cube[curSide][6];
+                spinElement[0][0] = 6;
+                spinElement[0][1] = 7;
+                spinElement[0][2] = 8;
+                spinSide[0] = curSide;
             } else if (curSide == RIGHT_SIDE) {
-                spinElement[2][0] = cube[curSide][8];
-                spinElement[2][1] = cube[curSide][7];
-                spinElement[2][2] = cube[curSide][6];
+                spinElement[2][0] = 6;
+                spinElement[2][1] = 7;
+                spinElement[2][2] = 8;
+                spinSide[2] = curSide;
             } else if (curSide == FORWARD_SIDE) {
-                spinElement[3][0] = cube[curSide][8];
-                spinElement[3][1] = cube[curSide][7];
-                spinElement[3][2] = cube[curSide][6];
+                spinElement[1][0] = 6;
+                spinElement[1][1] = 7;
+                spinElement[1][2] = 8;
+                spinSide[1] = curSide;
             } else {
-                spinElement[1][0] = cube[curSide][8];
-                spinElement[1][1] = cube[curSide][7];
-                spinElement[1][2] = cube[curSide][6];
+                spinElement[3][0] = 6;
+                spinElement[3][1] = 7;
+                spinElement[3][2] = 8;
+                spinSide[3] = curSide;
             }
         } else if (axisSide == LEFT_SIDE) {
             if (curSide == UP_SIDE) {
-                spinElement[0][0] = cube[curSide][0];
-                spinElement[0][1] = cube[curSide][3];
-                spinElement[0][2] = cube[curSide][6];
+                spinElement[0][0] = 0;
+                spinElement[0][1] = 3;
+                spinElement[0][2] = 6;
+                spinSide[0] = curSide;
             } else if (curSide == DOWN_SIDE) {
-                spinElement[2][0] = cube[curSide][0];
-                spinElement[2][1] = cube[curSide][3];
-                spinElement[2][2] = cube[curSide][6];
+                spinElement[2][0] = 0;
+                spinElement[2][1] = 3;
+                spinElement[2][2] = 6;
+                spinSide[2] = curSide;
             } else if (curSide == FORWARD_SIDE) {
-                spinElement[1][0] = cube[curSide][0];
-                spinElement[1][1] = cube[curSide][3];
-                spinElement[1][2] = cube[curSide][6];
+                spinElement[1][0] = 0;
+                spinElement[1][1] = 3;
+                spinElement[1][2] = 6;
+                spinSide[1] = curSide;
             } else {
-                spinElement[3][0] = cube[curSide][2];
-                spinElement[3][1] = cube[curSide][5];
-                spinElement[3][2] = cube[curSide][8];
+                spinElement[3][0] = 8;
+                spinElement[3][1] = 5;
+                spinElement[3][2] = 2;
+                spinSide[3] = curSide;
             }
         } else if (axisSide == RIGHT_SIDE) {
             if (curSide == UP_SIDE) {
-                spinElement[0][0] = cube[curSide][8];
-                spinElement[0][1] = cube[curSide][5];
-                spinElement[0][2] = cube[curSide][2];
+                spinElement[0][0] = 8;
+                spinElement[0][1] = 5;
+                spinElement[0][2] = 2;
+                spinSide[0] = curSide;
             } else if (curSide == DOWN_SIDE) {
-                spinElement[2][0] = cube[curSide][8];
-                spinElement[2][1] = cube[curSide][5];
-                spinElement[2][2] = cube[curSide][2];
+                spinElement[2][0] = 8;
+                spinElement[2][1] = 5;
+                spinElement[2][2] = 2;
+                spinSide[2] = curSide;
             } else if (curSide == FORWARD_SIDE) {
-                spinElement[1][0] = cube[curSide][8];
-                spinElement[1][1] = cube[curSide][5];
-                spinElement[1][2] = cube[curSide][2];
+                spinElement[3][0] = 8;
+                spinElement[3][1] = 5;
+                spinElement[3][2] = 2;
+                spinSide[3] = curSide;
             } else {
-                spinElement[3][0] = cube[curSide][0];
-                spinElement[3][1] = cube[curSide][3];
-                spinElement[3][2] = cube[curSide][6];
+                spinElement[1][0] = 0;
+                spinElement[1][1] = 3;
+                spinElement[1][2] = 6;
+                spinSide[1] = curSide;
             }
         } else if (axisSide == FORWARD_SIDE) {
             if (curSide == UP_SIDE) {
-                spinElement[0][0] = cube[curSide][6];
-                spinElement[0][1] = cube[curSide][7];
-                spinElement[0][2] = cube[curSide][8];
+                spinElement[0][0] = 6;
+                spinElement[0][1] = 7;
+                spinElement[0][2] = 8;
+                spinSide[0] = curSide;
             } else if (curSide == RIGHT_SIDE) {
-                spinElement[1][0] = cube[curSide][0];
-                spinElement[1][1] = cube[curSide][3];
-                spinElement[1][2] = cube[curSide][6];
+                spinElement[1][0] = 0;
+                spinElement[1][1] = 3;
+                spinElement[1][2] = 6;
+                spinSide[1] = curSide;
             } else if (curSide == DOWN_SIDE) {
-                spinElement[2][0] = cube[curSide][2];
-                spinElement[2][1] = cube[curSide][1];
-                spinElement[2][2] = cube[curSide][0];
+                spinElement[2][0] = 2;
+                spinElement[2][1] = 1;
+                spinElement[2][2] = 0;
+                spinSide[2] = curSide;
             } else {
-                spinElement[3][0] = cube[curSide][8];
-                spinElement[3][1] = cube[curSide][5];
-                spinElement[3][2] = cube[curSide][2];
+                spinElement[3][0] = 8;
+                spinElement[3][1] = 5;
+                spinElement[3][2] = 2;
+                spinSide[3] = curSide;
             }
         } else {
             if (curSide == UP_SIDE) {
-                spinElement[0][0] = cube[curSide][2];
-                spinElement[0][1] = cube[curSide][1];
-                spinElement[0][2] = cube[curSide][0];
+                spinElement[0][0] = 2;
+                spinElement[0][1] = 1;
+                spinElement[0][2] = 0;
+                spinSide[0] = curSide;
             } else if (curSide == LEFT_SIDE) {
-                spinElement[1][0] = cube[curSide][0];
-                spinElement[1][1] = cube[curSide][3];
-                spinElement[1][2] = cube[curSide][6];
+                spinElement[1][0] = 0;
+                spinElement[1][1] = 3;
+                spinElement[1][2] = 6;
+                spinSide[1] = curSide;
             } else if (curSide == DOWN_SIDE) {
-                spinElement[2][0] = cube[curSide][6];
-                spinElement[2][1] = cube[curSide][7];
-                spinElement[2][2] = cube[curSide][8];
+                spinElement[2][0] = 6;
+                spinElement[2][1] = 7;
+                spinElement[2][2] = 8;
+                spinSide[2] = curSide;
             } else {
-                spinElement[3][0] = cube[curSide][8];
-                spinElement[3][1] = cube[curSide][5];
-                spinElement[3][2] = cube[curSide][2];
+                spinElement[3][0] = 8;
+                spinElement[3][1] = 5;
+                spinElement[3][2] = 2;
+                spinSide[3] = curSide;
             }
+        }
+
+        return curSide;
+    }
+
+    private static void spinClockwise(int[][] spinElement, int[] spinSide) {
+        String[] temp = new String[3];
+        for (int i = 0; i < 3; i++) {
+            temp[i] = cube[spinSide[3]][spinElement[3][i]];
+        }
+        for (int i = 3; i > 0; i--) {
+            for (int j = 0; j < 3; j++) {
+                cube[spinSide[i]][spinElement[i][j]]
+                        = cube[spinSide[i - 1]][spinElement[i - 1][j]];
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            cube[spinSide[0]][spinElement[0][i]] = temp[i];
         }
     }
 
-    private static void spinClockwise(String[][] spinElement) {
+    private static void spinCounterClockwise(int[][] spinElement, int[] spinSide) {
         String[] temp = new String[3];
         for (int i = 0; i < 3; i++) {
-            temp[i] = spinElement[3][i];
+            temp[i] = cube[spinSide[0]][spinElement[0][i]];
         }
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                spinElement[(i + 1) % 4][j] = spinElement[i][j];
+                cube[spinSide[i]][spinElement[i][j]]
+                        = cube[spinSide[i + 1]][spinElement[i + 1][j]];
             }
         }
         for (int i = 0; i < 3; i++) {
-            spinElement[0][i] = temp[i];
-        }
-    }
-
-    private static void spinCounterClockwise(String[][] spinElement) {
-        String[] temp = new String[3];
-        for (int i = 0; i < 3; i++) {
-            temp[i] = spinElement[0][i];
-        }
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                spinElement[(i) % 4][j] = spinElement[i + 1][j];
-            }
-        }
-        for (int i = 0; i < 3; i++) {
-            spinElement[3][i] = temp[i];
+            cube[spinSide[3]][spinElement[3][i]] = temp[i];
         }
     }
 
@@ -266,24 +325,4 @@ public class BaekJoon_5373 {
         }
     }
 
-    private static void resetCube() {
-        for (int j = 0; j < CUBE_SIZE * CUBE_SIZE; j++) {
-            cube[0][j] = "w";
-        }
-        for (int j = 0; j < CUBE_SIZE * CUBE_SIZE; j++) {
-            cube[1][j] = "g";
-        }
-        for (int j = 0; j < CUBE_SIZE * CUBE_SIZE; j++) {
-            cube[2][j] = "r";
-        }
-        for (int j = 0; j < CUBE_SIZE * CUBE_SIZE; j++) {
-            cube[3][j] = "o";
-        }
-        for (int j = 0; j < CUBE_SIZE * CUBE_SIZE; j++) {
-            cube[4][j] = "b";
-        }
-        for (int j = 0; j < CUBE_SIZE * CUBE_SIZE; j++) {
-            cube[5][j] = "y";
-        }
-    }
 }
