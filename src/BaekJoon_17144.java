@@ -14,7 +14,7 @@ public class BaekJoon_17144 {
     private static int[] dy = {-1,1,0,0};
 
     public static void main(String[] args) {
-        initialize();
+        initialize(map);
         getInput();
         for (int i = 0; i < time; i++) {
             spreadDust();
@@ -23,9 +23,19 @@ public class BaekJoon_17144 {
         System.out.println(countDust());
     }
 
-    private static void initialize() {
+    private static void initialize(int[][] tempMap) {
         for (int i = 0; i < 52; i++) {
-            Arrays.fill(map[i], -1);
+            Arrays.fill(tempMap[i], -1);
+        }
+        for (int i = 0; i < mapRow; i++) {
+            for (int j = 0; j < mapCol; j++) {
+                int input = map[i + 1][j + 1];
+                if (input > 0) {
+                    tempMap[i + 1][j + 1] = 0;
+                } else {
+                    tempMap[i + 1][j + 1] = map[i + 1][j + 1];
+                }
+            }
         }
     }
 
@@ -51,23 +61,27 @@ public class BaekJoon_17144 {
     }
 
     private static void spreadDust() {
-        int[][] tempMap = new int[50][50];
+        int[][] tempMap = new int[52][52];
+        initialize(tempMap);
         for (int row = 0; row < mapRow; row++) {
             for (int col = 0; col < mapCol; col++) {
                 // Dust dust = dustList.get(i);
-            int curRow = row;
-            int curCol = col;
-            int size = map[curRow][curCol];
-            int spreadSize = size/5;
-            for (int k = 0; k < 4; k++) {
-                int tempX = curRow + dx[k];
-                int tempY = curRow + dy[k];
-                if(map[tempX][tempY] != -1){
-                    tempMap[tempX][tempY] = spreadSize;
-                    size -= spreadSize;
+                int curRow = row + 1;
+                int curCol = col + 1;
+                int size = map[curRow][curCol];
+                int spreadSize = size/5;
+                if (size > 0) {
+                    for (int k = 0; k < 4; k++) {
+                        int tempX = curRow + dx[k];
+                        int tempY = curCol + dy[k];
+                        if(map[tempX][tempY] != -1){
+                            tempMap[tempX][tempY] += spreadSize;
+                            size -= spreadSize;
+                        }
+                    }
+                    tempMap[curRow][curCol] += size;
                 }
-            }
-            tempMap[curRow][curCol] += size;
+
             }
             
         }
@@ -75,14 +89,14 @@ public class BaekJoon_17144 {
     }
 
     private static void operateFilter() {
-        makeUpCycle(filterRow, filterCol + 1, 0);
-        makeDownCycle(filterRow + 1, filterCol + 1, 0);
+        makeUpCycle(filterRow - 1, filterCol + 1, 0);
+        makeDownCycle(filterRow, filterCol + 1, 0);
     }
 
     private static void makeUpCycle(int curRow, int curCol, int preVal) {
-        int nextRow, nextCol, curVal;
+        int nextRow, nextCol, nextVal;
         
-        if(map[curRow][curCol-1] == -1){
+        if(curCol == 1){
             nextRow = curRow + 1;
             nextCol = curCol;
         } else if(curRow == 1){
@@ -95,40 +109,39 @@ public class BaekJoon_17144 {
             nextRow = curRow;
             nextCol = curCol + 1;
         }
-        
-        if(curRow == filterRow && curCol == filterCol){
+        nextVal = map[curRow][curCol];
+
+        if(curRow == filterRow - 1 && curCol == filterCol){
             return;
         }
-        curVal = map[nextRow][nextCol];
-        map[nextRow][nextCol] = preVal;
-        makeUpCycle(nextRow, nextCol, curVal);
+        map[curRow][curCol] = preVal;
+        makeUpCycle(nextRow, nextCol, nextVal);
     }
 
     private static void makeDownCycle(int curRow, int curCol, int preVal) {
-        int nextRow, nextCol, curVal;
-        if(curRow == filterRow + 1 && curCol == filterCol){
-            return;
-        }
-        if(map[curRow][curCol-1] == -1){
+        int nextRow, nextCol, nextVal;
+
+        if(curCol == 1){
             nextRow = curRow - 1;
             nextCol = curCol;
         } else if(curRow == mapRow){
             nextRow = curRow;
             nextCol = curCol - 1;
-        } else if(map[curRow][curCol+1] == -1){
+        } else if(curCol == mapCol){
             nextRow = curRow + 1;
             nextCol = curCol;
         } else{
             nextRow = curRow;
             nextCol = curCol + 1;
         }
+        nextVal = map[curRow][curCol];
 
-        if(curRow == filterRow + 1 && curCol == filterCol){
+        if(curRow == filterRow && curCol == filterCol){
             return;
         }
-        curVal = map[nextRow][nextCol];
-        map[nextRow][nextCol] = preVal;
-        makeUpCycle(nextRow, nextCol, curVal);
+
+        map[curRow][curCol] = preVal;
+        makeDownCycle(nextRow, nextCol, nextVal);
     }
 
     private static int countDust() {
@@ -136,7 +149,7 @@ public class BaekJoon_17144 {
         for (int row = 0; row < mapRow; row++) {
             for (int col = 0; col < mapCol; col++) {
                 // Dust dust = dustList.get(row);
-                int temp = map[row][col];
+                int temp = map[row + 1][col + 1];
                 if(temp >0){
                     count += temp;
                 }
