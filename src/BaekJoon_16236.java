@@ -1,14 +1,13 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class BaekJoon_16236 {
-    private static int mapSize;
+    private static int mapSize, answer = 0;
     private static Shark shark;
     private static int[][] map = new int[20][20];
-    private static int[][] movable = new int[20][20];
-    private static int[][] fish = new int[6][400];
+    private static int[][] visited = new int[20][20];
     private static FishArr fishArr = new FishArr();
+    private static int[] dx = {0, 0, 1, -1};
+    private static int[] dy = {1, -1, 0, 0};
 
     public static void main(String[] args) {
         getInput();
@@ -37,61 +36,116 @@ public class BaekJoon_16236 {
     private static int getTimeToHungry() {
         int time = 0;
         while (eatNextFish()) {
-            time++;
         }
-        return time;
+        return answer;
     }
 
     private static boolean eatNextFish() {
-        boolean result;
-        for (int size = 0; size < shark.size; size++) {
-            if (findFish(size)) {
+        boolean result = false;
+        ArrayList<Fish> fishList = new ArrayList<>();
+        for (int size = 1; size < shark.size; size++) {
+            findFish(size, fishList);
+        }
+
+        Collections.sort(fishList);
+
+        for (Fish fish : fishList) {
+            if (fish.dist < 987654321) {
+                map[fish.x][fish.y] = 0;
+                answer += fish.dist;
+                shark.eatFish(fish);
                 result = true;
+                break;
             }
         }
-        result = false;
         return result;
     }
 
-    private static boolean findFish(int size) {
+    private static void findFish(int size, ArrayList<Fish> fishList) {
         int fishCount = fishArr.getFishCount(size);
         int min = 987654321;
-        ArrayList<Fish> fishList = new ArrayList<>();
 
         for (int fishNum = 0; fishNum < fishCount; fishNum++) {
             Fish fish = fishArr.getFishArr(size).get(fishNum);
-            fish.setDist(getDistance(fishNum, size));
+            fish.dist = getFishDistBFS(fish);
             fishList.add(fish);
         }
 
-//        if (canReach()) {
-//        }
+    }
+
+    private static int getFishDistBFS(Fish fish) {
+        Queue<int[]> queue = new LinkedList<>();
+
+        queue.add(new int[]{shark.x, shark.y, 0});
+
+        while (!queue.isEmpty()) {
+            int[] xy = queue.poll();
+            int curX = xy[0];
+            int curY = xy[1];
+            int dist = xy[2];
+
+            if (curX == fish.x && curY == fish.y) {
+                resetVisited();
+                return dist;
+            }
+
+            for (int i = 0; i < 4; i++) {
+                int tempX = curX + dx[i];
+                int tempY = curY + dy[i];
+                if (isInArea(tempX, tempY)) {
+                    if (visited[tempX][tempY] != 1) {
+                        visited[tempX][tempY] = 1;
+                        queue.add(new int[]{tempX, tempY, dist + 1});
+                    }
+                }
+            }
+        }
+
+        resetVisited();
+
+        return 987654321;
+    }
+
+
+
+    private static boolean isInArea(int curX, int curY) {
+        if (0 <= curX && curX < mapSize && 0 <= curY && curY < mapSize){
+            return map[curX][curY] <= shark.size;
+        }
         return false;
     }
 
-    private static int getDistance(int fishNum, int size) {
-        int fishX = fishArr.getFishArr(size).get(fishNum).getX();
-        int fishY = fishArr.getFishArr(size).get(fishNum).getY();
-        return Math.abs(shark.x - fishX) + Math.abs(shark.y - fishY);
+    private static void resetVisited() {
+        for (int i = 0; i < 20; i++) {
+            Arrays.fill(visited[i], 0);
+        }
     }
 
     private static class Shark {
-        int x, y, size;
+        int x, y, size, eatenFish;
 
         public Shark(int x, int y, int size) {
             this.x = x;
             this.y = y;
             this.size = size;
+            eatenFish = 0;
+        }
+
+        public void eatFish(Fish fish) {
+            map[x][y] = 0;
+            this.x = fish.x;
+            this.y = fish.y;
+            map[x][y] = 9;
+            fishArr.getFishArr(fish.size).remove(fish);
+            eatenFish++;
+            if (eatenFish == size) {
+                size++;
+                eatenFish = 0;
+            }
         }
     }
 
     private static class FishArr {
-        private int size1FishCount = 0;
-        private int size2FishCount = 0;
-        private int size3FishCount = 0;
-        private int size4FishCount = 0;
-        private int size5FishCount = 0;
-        private int size6FishCount = 0;
 
         private List<Fish> size1Fish = new ArrayList<>();
         private List<Fish> size2Fish = new ArrayList<>();
@@ -118,38 +172,24 @@ public class BaekJoon_16236 {
 
         public int getFishCount(int size) {
             if (size == 1) {
-                return size1FishCount;
+                return size1Fish.size();
             } else if (size == 2) {
-                return size2FishCount;
+                return size2Fish.size();
             } else if (size == 3) {
-                return size3FishCount;
+                return size3Fish.size();
             } else if (size == 4) {
-                return size4FishCount;
+                return size4Fish.size();
             } else if (size == 5) {
-                return size5FishCount;
+                return size5Fish.size();
             } else {
-                return size6FishCount;
+                return size6Fish.size();
             }
         }
 
-        public void addFishCount(int size) {
-            if (size == 1) {
-                size1FishCount++;
-            } else if (size == 2) {
-                size2FishCount++;
-            } else if (size == 3) {
-                size3FishCount++;
-            } else if (size == 4) {
-                size4FishCount++;
-            } else if (size == 5) {
-                size5FishCount++;
-            } else {
-                size6FishCount++;
-            }
-        }
+
     }
 
-    private static class Fish {
+    private static class Fish implements Comparable<Fish>{
         private int x, y, size;
         private int dist;
 
@@ -167,8 +207,25 @@ public class BaekJoon_16236 {
             this.size = size;
         }
 
-        public void setDist(int distance) {
-            this.dist = distance;
+
+        @Override
+        public int compareTo(Fish fish) {
+            int thisDist = Math.abs(this.x - shark.x) + Math.abs(this.y - shark.y);
+            int otherDist = Math.abs(fish.x - shark.x) + Math.abs(fish.y - shark.y);
+
+            if (this.dist < fish.dist) {
+                return -1;
+            } else if (this.dist > fish.dist) {
+                return 1;
+            } else {
+                if (this.x < fish.x) {
+                    return -1;
+                } else if (this.x > fish.x) {
+                    return 1;
+                } else {
+                    return Integer.compare(this.y, fish.y);
+                }
+            }
         }
     }
 }
