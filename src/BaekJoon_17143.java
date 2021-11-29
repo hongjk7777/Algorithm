@@ -1,25 +1,38 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
-
+import java.util.*;
+/*
+나혼자 풀지 못하고 인터넷 보고 품
+문제점 : 자료구조를 잘못 선택함
+알게된 점: 방향을 바꿀때 상우하좌를 순서대로 하면 d = (d+2) % 4로 if 문 분기없이 가능
+ */
 public class BaekJoon_17143 {
 
     private static int mapRow, mapCol, sharkAmount, answer;
     private static int[][] map = new int[100][100];
-    private static Shark topShark;
-    private static ArrayList<Shark> sharkList = new ArrayList<>();
-    private static int[] dRow = {-1, 1, 0, 0};
-    private static int[] dCol = {0, 0, 1, -1};
+    private static int[][] anotherMap = new int[100][100];
+    private static Queue<Shark> sharkQueue = new LinkedList<>();
+    private static int[] dRow = {-1, 0, 1, 0};
+    private static int[] dCol = {0, -1, 0, 1};
+    private static int sharkCount = 0;
 
     public static void main(String[] args) {
         getInput();
         for (int fisherCol = 0; fisherCol < mapCol; fisherCol++) {
-            catchShark();
-            map = moveShark(fisherCol);
+            if (sharkAmount == 0 || sharkAmount == sharkCount) {
+                break;
+            }
+            if (fisherCol % 2 == 0) {
+                catchShark(fisherCol, map);
+                moveSharks(map, anotherMap);
+            } else {
+                catchShark(fisherCol, anotherMap);
+                moveSharks(anotherMap, map);
+            }
         }
 
         System.out.println(answer);
     }
+
+
 
     private static void getInput() {
         Scanner scanner = new Scanner(System.in);
@@ -30,138 +43,68 @@ public class BaekJoon_17143 {
             int row = scanner.nextInt() - 1;
             int col = scanner.nextInt() - 1;
             int speed = scanner.nextInt();
-            int dir = scanner.nextInt() - 1;
+            int dir = scanner.nextInt();
+            if (dir == 1) {
+                dir = 0;
+            } else if (dir == 4) {
+                dir = 1;
+            }
             int size = scanner.nextInt();
             Shark shark = new Shark(row, col, speed, dir, size);
-            if (col == 0) {
-                compareHigher(shark);
-            }
-            sharkList.add(shark);
-            map[row][col] = sharkList.size();
+            sharkQueue.add(shark);
+            map[row][col] = size;
         }
     }
 
-    private static int[][] moveShark(int fisherCol) {
-        int[][] nextMap = new int[100][100];
+    private static void catchShark(int fisherCol, int[][] map) {
+        for (int row = 0; row < mapRow; row++) {
+            if (map[row][fisherCol] != 0) {
+                answer += map[row][fisherCol];
+                map[row][fisherCol] = 0;
+                sharkCount++;
+                break;
+            }
 
-        int sharkNum = sharkList.size();
-        for (int i = 0; i < sharkNum; i++) {
-            Shark shark = sharkList.get(i);
-            if (!shark.isAlive()) {
+        }
+
+    }
+
+    private static void moveSharks(int[][] now, int[][] next) {
+        int size = sharkQueue.size();
+        for (int i = 0; i < size; i++) {
+            Shark shark = sharkQueue.poll();
+            if (now[shark.row][shark.col] != shark.size) {
                 continue;
             }
-            int dir = shark.dir;
-            int speed = shark.speed;
-            int row = shark.row;
-            int col = shark.col;
-
-            map[row][col] = 0;
-            shark = calculateRowCol(shark);
-
-            row = shark.row;
-            col = shark.col;
-
-            if (nextMap[row][col] > 0) {
-                Shark anotherShark = sharkList.get(nextMap[row][col] - 1);
-                i--;
-                if (enterSameArea(shark, anotherShark)) {
-                    nextMap[row][col] = i;
-                }
-            } else {
-                nextMap[row][col] = i + 1;
-            }
-            
-            if (shark.col == fisherCol + 1) {
-                compareHigher(shark);
-            }
-
-        }
-        return nextMap;
-    }
-
-
-
-    private static Shark calculateRowCol(Shark shark) {
-        int row = shark.row;
-        int col = shark.col;
-
-        for (int i = 0; i < shark.speed; i++) {
-            row += dRow[shark.dir];
-            col += dCol[shark.dir];
-            if (row < 0 && shark.dir < 2) {
-                row = 1;
-                if (shark.dir == 0) {
-                    shark.dir = 1;
-                } else {
-                    shark.dir = 0;
-                }
-            }
-            if (row == mapRow && shark.dir < 2) {
-                row = mapRow - 2;
-                if (shark.dir == 0) {
-                    shark.dir = 1;
-                } else {
-                    shark.dir = 0;
-                }
-            }
-
-            if (col < 0 && shark.dir > 1) {
-                col = 1;
-                if (shark.dir == 2) {
-                    shark.dir = 3;
-                } else {
-                    shark.dir = 2;
-                }
-            }
-            if (col == mapCol && shark.dir > 1) {
-                col = mapCol - 2;
-                if (shark.dir == 2) {
-                    shark.dir = 3;
-                } else {
-                    shark.dir = 2;
-                }
-            }
-        }
-        shark.row = row;
-        shark.col = col;
-
-        return shark;
-    }
-
-    private static void resetMap(int[][] nextMap) {
-        for (int i = 0; i < 100; i++) {
-            Arrays.fill(nextMap[i], 0);
+            moveShark(shark, next);
+            now[shark.row][shark.col] = 0;
         }
     }
 
-
-    private static boolean enterSameArea(Shark shark, Shark anotherShark) {
-        if (shark.size > anotherShark.size) {
-            anotherShark.isCaught();
-            return true;
+    private static void moveShark(Shark shark, int[][] next) {
+        int row = shark.row, col = shark.col, speed = shark.speed,
+                size = shark.size, dir = shark.dir;
+        if (dir == 0 || dir == 2) {
+            speed %= 2 * (mapRow - 1);
         } else {
-            shark.isCaught();
-            return false;
+            speed %= 2 * (mapCol - 1);
         }
+
+        for (int i = 0; i < speed; i++) {
+            if (row + dRow[dir] < 0 || row + dRow[dir] >= mapRow ||
+                    col + dCol[dir] < 0 || col + dCol[dir] >= mapCol) {
+                dir = (dir + 2) % 4;
+            }
+            row += dRow[dir];
+            col += dCol[dir];
+        }
+
+        if (next[row][col] > size) return;
+
+        next[row][col] = size;
+        sharkQueue.add(new Shark(row, col, speed, dir, size));
     }
 
-    private static void compareHigher(Shark shark) {
-        if (topShark == null) {
-            topShark = shark;
-        }
-        if (shark.row < topShark.row) {
-            topShark = shark;
-        }
-    }
-
-    private static void catchShark() {
-        if (topShark != null) {
-            map[topShark.row][topShark.col] = 0;
-            answer += topShark.size;
-            topShark.isCaught();
-            topShark = null;
-        }
-    }
 
     
 
@@ -176,6 +119,11 @@ public class BaekJoon_17143 {
             this.speed = speed;
             this.dir = dir;
             this.size = size;
+        }
+
+        public Shark(int row, int col) {
+            this.row = row;
+            this.col = col;
         }
 
         public void isCaught() {
