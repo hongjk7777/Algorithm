@@ -44,8 +44,10 @@ public class BaekJoon_16236 {
 
     private static boolean eatNextFish() {
         boolean result;
+        ArrayList<Fish> fishList;
         for (int size = 0; size < shark.size; size++) {
-            if (findFish(size)) {
+            fishList = findFish(size);
+            if (canReach(fishList)){
                 result = true;
             }
         }
@@ -53,7 +55,8 @@ public class BaekJoon_16236 {
         return result;
     }
 
-    private static boolean findFish(int size) {
+
+    private static ArrayList<Fish> findFish(int size) {
         int fishCount = fishArr.getFishCount(size);
         int min = 987654321;
         ArrayList<Fish> fishList = new ArrayList<>();
@@ -63,10 +66,25 @@ public class BaekJoon_16236 {
             fish.setDist(getDistance(fishNum, size));
             fishList.add(fish);
         }
+        
+        return fishList;
 
 //        if (canReach()) {
 //        }
+    }
+
+    
+    private static boolean canReach(ArrayList<Fish> fishList) {
+        Fish fish;
+        for (int i = 0; i < fishList.size(); i++) {
+            fishList.get(0);
+            fish = fishList.remove(0);
+            findRouteBFS(fish);
+        }
         return false;
+    }
+
+    private static void findRouteBFS(Fish fish) {
     }
 
     private static int getDistance(int fishNum, int size) {
