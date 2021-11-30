@@ -2,7 +2,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Scanner;
-
+/*
+ 아쉬운 점: map을 사용했더라면 조금 더 일반적인 풀이가 가능했다.
+          자료구조에 대해 조금 더 생각해보고 풀어보자
+ */
 public class BaekJoon_17140 {
 
     private static int targetRow, targetCol, targetVal, rowSize, colSize;
