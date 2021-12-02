@@ -25,12 +25,9 @@ public class BaekJoon_17142 {
     public static void main(String[] args) throws IOException {
         getInput();
         combinationVirus(0, virusList.size(), activatedAmount);
-        if (min == 987654321) {
-            min = -1;
-        }
+        changeMinIfImposible();
         System.out.println(min);
     }
-
 
     private static void getInput() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -79,11 +76,6 @@ public class BaekJoon_17142 {
                 }
             }
             spreadVirusBFS();
-
-//            for (int i = 0; i < virusList.size(); i++) {
-//                Virus virus = virusList.get(i);
-//                map[virus.row][virus.col] = -1;
-//            }
             activatedVirusList.clear();
             return;
         }
@@ -174,6 +166,13 @@ public class BaekJoon_17142 {
                     visited[i][j] = input;
                 }
             }
+        }
+    }
+
+
+    private static void changeMinIfImposible() {
+        if (min == 987654321) {
+            min = -1;
         }
     }
 
