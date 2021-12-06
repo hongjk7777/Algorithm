@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 public class BaekJoon_20061 {
     private static int blockAmount, type, blockRow, blockCol, score = 0;
     private static int[][] map = new int[10][10];
-    private static ArrayList<Block> startBlockList = new ArrayList<>();
+    private static Block[] startBlockList = new Block[10000];
 
     public static void main(String[] args) throws IOException {
         getInput();
@@ -31,7 +31,8 @@ public class BaekJoon_20061 {
             blockRow = Integer.parseInt(tokenizer.nextToken());
             blockCol = Integer.parseInt(tokenizer.nextToken());
 
-            startBlockList.add(new Block(type, blockRow, blockCol));
+            startBlockList[i] = new Block(type, blockRow, blockCol);
+//            startBlockList.add(new Block(type, blockRow, blockCol));
         }
     }
 
@@ -48,7 +49,7 @@ public class BaekJoon_20061 {
     }
 
     private static void pushBlockBlueArea(int blockNum) {
-        Block block = startBlockList.get(blockNum);
+        Block block = startBlockList[blockNum];
         int row = block.row;
         int col = block.col;
         int type = block.type;
@@ -141,7 +142,7 @@ public class BaekJoon_20061 {
 
 
     private static void pushBlockGreenArea(int blockNum) {
-        Block block = startBlockList.get(blockNum);
+        Block block = startBlockList[blockNum];
         int row = block.row;
         int col = block.col;
         int type = block.type;
@@ -181,13 +182,15 @@ public class BaekJoon_20061 {
 
     private static void countScore(int row, int col) {
         boolean ableToScore;
-        int maxCol;
-        int maxRow;
+        int maxCol, colCount;
+        int maxRow, rowCount;
 
         do {
             ableToScore = false;
             maxCol = 0;
             maxRow = 0;
+            colCount = 0;
+            rowCount = 0;
 
             if (col > 4) {  // blue area
                 for (int tempCol = 0; tempCol < 4; tempCol++) {
@@ -198,8 +201,11 @@ public class BaekJoon_20061 {
                         }
                     }
                     if (blockCount == 4) {
-                        clearLine(row, tempCol);
-                        maxCol = tempCol + 6;
+                        clearLine(row, 6 + tempCol);
+                        if (maxCol < tempCol + 6) {
+                            maxCol = tempCol + 6;
+                        }
+                        colCount++;
                         ableToScore = true;
                         score++;
                     }
@@ -213,8 +219,12 @@ public class BaekJoon_20061 {
                         }
                     }
                     if (blockCount == 4) {
-                        clearLine(tempRow, col);
-                        maxRow = tempRow + 6;
+                        clearLine(6 + tempRow, col);
+                        if (maxRow < tempRow + 6) {
+                            maxRow = tempRow + 6;
+                        }
+                        rowCount++;
+//                        maxRow = tempRow + 6;
                         ableToScore = true;
                         score++;
                     }
@@ -222,11 +232,15 @@ public class BaekJoon_20061 {
             }
 
             if (maxRow > 0) {
-                pushGreenArea(maxRow);
+                for (int i = 0; i < rowCount; i++) {
+                    pushGreenArea(maxRow);
+                }
             }
 
             if (maxCol > 0) {
-                pushBlueArea(maxCol);
+                for (int i = 0; i < colCount; i++) {
+                    pushBlueArea(maxCol);
+                }
             }
 
         } while (ableToScore);
@@ -292,13 +306,13 @@ public class BaekJoon_20061 {
     private static void clearLine(int row, int col) {
         if (col > 4) {  //blue Area
             for (int tempRow = 0; tempRow < 4; tempRow++) {
-                map[tempRow][6 + col] = 0;
+                map[tempRow][col] = 0;
             }
         }
 
         else {          //green Area
             for (int tempCol = 0; tempCol < 4; tempCol++) {
-                map[6 + row][tempCol] = 0;
+                map[row][tempCol] = 0;
             }
         }
 
