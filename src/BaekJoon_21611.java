@@ -215,11 +215,9 @@ public class BaekJoon_21611 {
 
     private static void transformBeads() {
         ArrayList<Integer> beadsNumList = new ArrayList<>();
-        ArrayList<Location> tempLocationList = new ArrayList<>();
         int locationIndex = 0;
         int lastBeadsNum = 0;
         int sameBeads = 0;
-        boolean end = false;
 
         for (Location location : locationList) {
             int row = location.row;
@@ -234,51 +232,39 @@ public class BaekJoon_21611 {
         clearBeads();
 
         for (int i = 0; i < beadsNumList.size(); i++) {
-            Integer beadsNum = beadsNumList.get(i);
-            int curNum = lastBeadsNum;
-
-            if (curNum == 0) {
-                lastBeadsNum = beadsNum;
-                sameBeads++;
-            }
+            int beadsNum = beadsNumList.get(i);
 
             if (i == beadsNumList.size() - 1) {
-                if (beadsNum != lastBeadsNum) {
-                    putTransformedBeads(locationIndex, lastBeadsNum, sameBeads);
-                    Location tempLocation;
-                    locationIndex += 2;
-                    if (locationIndex >= mapSize * mapSize - 2) {
-                        break;
-                    }
-                    tempLocation = locationList.get(locationIndex);
-                    map[tempLocation.row][tempLocation.col] = 1;
-                    if (locationIndex + 1 > mapSize * mapSize - 2) {
-                        break;
-                    }
-                    tempLocation = locationList.get(locationIndex + 1);
-                    map[tempLocation.row][tempLocation.col] = beadsNum;
-                } else if (curNum != 0){
-                    sameBeads++;
-                    putTransformedBeads(locationIndex, lastBeadsNum, sameBeads);
-                    if (locationIndex > mapSize * mapSize - 2) {
-                        break;
-                    }
+                if (lastBeadsNum == 0) {
+                    lastBeadsNum = beadsNum;
                 }
+                sameBeads++;
+                putTransformedBeads(locationIndex, lastBeadsNum, sameBeads);
                 break;
             }
 
-            if (beadsNum != lastBeadsNum) {
+            int nextBeadsNum = beadsNumList.get(i + 1);
+
+            if (sameBeads == 0) {
+                lastBeadsNum = beadsNum;
+            }
+            sameBeads++;
+
+            if (beadsNum != nextBeadsNum) {
                 putTransformedBeads(locationIndex, lastBeadsNum, sameBeads);
                 locationIndex += 2;
-                if (locationIndex > mapSize * mapSize - 2) {
+                if (isOverMap(locationIndex)) {
                     break;
                 }
-                lastBeadsNum = beadsNum;
-                sameBeads = 1;
-            } else if (curNum != 0){
-                sameBeads++;
+
+                sameBeads = 0;
+                lastBeadsNum = 0;
             }
         }
+    }
+
+    private static boolean isOverMap(int index) {
+        return index > mapSize * mapSize - 2;
     }
 
     private static void putTransformedBeads(int locationIndex, int lastBeadsNum, int sameBeads) {
