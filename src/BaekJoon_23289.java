@@ -1,3 +1,9 @@
+/*
+내가 한 실수
+1. 문제가 테케에 다 통과한다고 신나서 생각해볼만한
+예외들을 시행해보지 않음
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
