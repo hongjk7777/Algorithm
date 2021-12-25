@@ -41,13 +41,6 @@ public class BaekJoon_16236 {
     }
 
     private static boolean eatNextFish() {
-<<<<<<< HEAD
-        boolean result;
-        ArrayList<Fish> fishList;
-        for (int size = 0; size < shark.size; size++) {
-            fishList = findFish(size);
-            if (canReach(fishList)){
-=======
         boolean result = false;
         ArrayList<Fish> fishList = new ArrayList<>();
         for (int size = 1; size < shark.size; size++) {
@@ -61,7 +54,6 @@ public class BaekJoon_16236 {
                 map[fish.x][fish.y] = 0;
                 answer += fish.dist;
                 shark.eatFish(fish);
->>>>>>> 26440f46e1fb91968e308d3947e1a5cec72a066f
                 result = true;
                 break;
             }
@@ -69,12 +61,7 @@ public class BaekJoon_16236 {
         return result;
     }
 
-<<<<<<< HEAD
-
-    private static ArrayList<Fish> findFish(int size) {
-=======
     private static void findFish(int size, ArrayList<Fish> fishList) {
->>>>>>> 26440f46e1fb91968e308d3947e1a5cec72a066f
         int fishCount = fishArr.getFishCount(size);
         int min = 987654321;
 
@@ -83,22 +70,8 @@ public class BaekJoon_16236 {
             fish.dist = getFishDistBFS(fish);
             fishList.add(fish);
         }
-        
-        return fishList;
-
-<<<<<<< HEAD
-//        if (canReach()) {
-//        }
-    }
-
     
-    private static boolean canReach(ArrayList<Fish> fishList) {
-        Fish fish;
-        for (int i = 0; i < fishList.size(); i++) {
-            fishList.get(0);
-            fish = fishList.remove(0);
-            findRouteBFS(fish);
-=======
+
     }
 
     private static int getFishDistBFS(Fish fish) {
@@ -139,25 +112,14 @@ public class BaekJoon_16236 {
     private static boolean isInArea(int curX, int curY) {
         if (0 <= curX && curX < mapSize && 0 <= curY && curY < mapSize){
             return map[curX][curY] <= shark.size;
->>>>>>> 26440f46e1fb91968e308d3947e1a5cec72a066f
         }
         return false;
     }
 
-<<<<<<< HEAD
-    private static void findRouteBFS(Fish fish) {
-    }
-
-    private static int getDistance(int fishNum, int size) {
-        int fishX = fishArr.getFishArr(size).get(fishNum).getX();
-        int fishY = fishArr.getFishArr(size).get(fishNum).getY();
-        return Math.abs(shark.x - fishX) + Math.abs(shark.y - fishY);
-=======
     private static void resetVisited() {
         for (int i = 0; i < 20; i++) {
             Arrays.fill(visited[i], 0);
         }
->>>>>>> 26440f46e1fb91968e308d3947e1a5cec72a066f
     }
 
     private static class Shark {
