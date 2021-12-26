@@ -70,6 +70,7 @@ public class BaekJoon_16236 {
             fish.dist = getFishDistBFS(fish);
             fishList.add(fish);
         }
+    
 
     }
 

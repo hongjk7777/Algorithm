@@ -131,4 +131,34 @@ public class BaekJoon_17140 {
         rowSize = tempMaxRow;
     }
 
+<<<<<<< HEAD
+    private static class Pair implements Comparable<Pair>{
+        int number, count;
+
+        public Pair(int number){
+            this.number = number;
+            this.count = 1;
+            }
+
+        public void addCount(){
+            count++;
+        }
+
+        @Override
+        public int compareTo(Pair pair) {
+            if(this.count > pair.count){
+                return 1;
+            } else if(this.count < pair.count){
+                return -1;
+            } else{
+                if(this.number > pair.count){
+                    return 1;
+                } else{
+                    return -1;
+                }
+            }
+        }
+    }
+=======
+>>>>>>> 34c969a6b16d91ca6a6490f85a2842919fb6fa15
 }
