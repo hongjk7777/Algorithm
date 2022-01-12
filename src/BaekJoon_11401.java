@@ -3,6 +3,9 @@
 1. 이항 계수에 대해 공부할 수 있었다.(ex. 페르마의 소정리과 역원을 사용하는 법)
 2. 역원에 대한 이해가 부족해 더 공부가 필요할 듯
 3. 분할 정복에 대해 공부가 더 필요할 듯
+
+추가해야 할 점
+1. inverse[] 도 미리 계산해보기
  */
 import java.io.BufferedReader;
 import java.io.IOException;
