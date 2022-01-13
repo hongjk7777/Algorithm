@@ -23,11 +23,13 @@ public class BaekJoon_1254 {
 
     private static int findMinLen() {
         int length = string.length();
-        int halfPalinLen = length / 2;
         int min  = INT_MAX;
 
-        for (int i = length; i <= 2 * length; i++) {
-            int temp = getMinPalin(i);
+        for (int palinLen = length; palinLen <= 2 * length; palinLen++) {
+            int temp = INT_MAX;
+            if (isPalindrome(palinLen)) {
+                temp = palinLen;
+            }
             if (temp < min) {
                 min = temp;
             }
@@ -37,18 +39,18 @@ public class BaekJoon_1254 {
     }
 
 
-    private static int getMinPalin(int palinLen) {
+    private static boolean isPalindrome(int palinLen) {
         int halfLen = (palinLen - 1) / 2;
-        int ret = palinLen;
+        boolean palindrome = true;
         for (int i = 0; i <= halfLen; i++) {
             if (palinLen - 1 - i >= string.length()) {
                 continue;
             }
             if (string.charAt(i) != string.charAt(palinLen - 1 - i)) {
-                ret = INT_MAX;
+                palindrome = false;
                 break;
             }
         }
-        return ret;
+        return palindrome;
     }
 }
