@@ -19,7 +19,7 @@ public class BaekJoon_15661 {
 
     public static void main(String[] args) throws IOException {
         getInput();
-        makeTeams(0);
+        makeTeamsAndGetMinDiff(0);
         System.out.println(minDiff);
     }
 
@@ -40,16 +40,16 @@ public class BaekJoon_15661 {
         }
     }
 
-    private static void makeTeams(int start) {
+    private static void makeTeamsAndGetMinDiff(int start) {
         if (start >= n) {
             int temp = getSynergyDiff();
             updateMinDiff(temp);
             return;
         }
         checked[start] = true;
-        makeTeams(start + 1);
+        makeTeamsAndGetMinDiff(start + 1);
         checked[start] = false;
-        makeTeams(start + 1);
+        makeTeamsAndGetMinDiff(start + 1);
     }
 
     private static int getSynergyDiff() {
