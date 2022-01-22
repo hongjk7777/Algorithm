@@ -66,6 +66,15 @@ public class BaekJoon_15661 {
             return MAX_INT;
         }
 
+        int teamSynergy = getTeamSynergy();
+
+        int otherTeamSynergy = getOtherTeamSynergy();
+
+        clearTeams();
+        return Math.abs(teamSynergy - otherTeamSynergy);
+    }
+
+    private static int getTeamSynergy() {
         int teamSynergy = 0;
         for (int memberNum = 0; memberNum < team.size(); memberNum++) {
             int member = team.get(memberNum);
@@ -73,7 +82,10 @@ public class BaekJoon_15661 {
                 teamSynergy += synergy[member][otherMember];
             }
         }
+        return teamSynergy;
+    }
 
+    private static int getOtherTeamSynergy() {
         int otherTeamSynergy = 0;
         for (int memberNum = 0; memberNum < otherTeam.size(); memberNum++) {
             int member = otherTeam.get(memberNum);
@@ -81,9 +93,7 @@ public class BaekJoon_15661 {
                 otherTeamSynergy += synergy[member][otherMember];
             }
         }
-
-        clearTeams();
-        return Math.abs(teamSynergy - otherTeamSynergy);
+        return otherTeamSynergy;
     }
 
     private static void clearTeams() {
