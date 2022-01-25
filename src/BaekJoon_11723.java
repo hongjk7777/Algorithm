@@ -1,6 +1,7 @@
 /*
 배운 점
 1. switch문을 좀 더 적재적소에 쓰자
+2. 메모리 제한도 생각하면서 문제를 풀자
  */
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,14 +9,11 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class BaekJoon_11723 {
-    private static int m, s;
-    private static int[] input;
+    private static int s;
     private static final StringBuilder builder = new StringBuilder();
-    private static String[] sign;
 
     public static void main(String[] args) throws IOException {
         getInput();
-        calSigns();
         printAll();
     }
 
@@ -24,37 +22,28 @@ public class BaekJoon_11723 {
         StringTokenizer tokenizer;
 
         tokenizer = new StringTokenizer(reader.readLine());
-        m = Integer.parseInt(tokenizer.nextToken());
-        sign = new String[m];
-        input = new int[m];
+        int m = Integer.parseInt(tokenizer.nextToken());
 
         for (int i = 0; i < m; i++) {
             tokenizer = new StringTokenizer(reader.readLine());
-            sign[i] = tokenizer.nextToken();
-            if (sign[i].equals("all") || sign[i].equals("empty")) {
+            String sign = tokenizer.nextToken();
+            if (sign.equals("all") || sign.equals("empty")) {
+                calSign(sign, 0);
                 continue;
             }
-            input[i] = Integer.parseInt(tokenizer.nextToken());
+            int input = Integer.parseInt(tokenizer.nextToken());
+            calSign(sign, input);
         }
     }
 
-    private static void calSigns() {
-        for (int i = 0; i < m; i++) {
-            String temp = sign[i];
-            int num = input[i];
-            calSign(temp, num);
-        }
-    }
+    private static void calSign(String sign, int num) {
+        if (sign.equals("add")) add(num);
+        else if (sign.equals("remove")) remove(num);
+        else if (sign.equals("check")) check(num);
+        else if (sign.equals("toggle")) toggle(num);
+        else if (sign.equals("all")) all();
+        else if (sign.equals("empty")) empty();
 
-    private static void calSign(String temp, int num) {
-        switch (temp) {
-            case "add" -> add(num);
-            case "remove" -> remove(num);
-            case "check" -> check(num);
-            case "toggle" -> toggle(num);
-            case "all" -> all(num);
-            case "empty" -> empty();
-        }
     }
 
     private static void add(int num) {
@@ -80,12 +69,12 @@ public class BaekJoon_11723 {
         s = s ^ (1 << (num - 1));
     }
 
-    private static void all(int num) {
+    private static void all() {
         s = (1 << 20) - 1;
     }
 
     private static void empty() {
-        s = 0;
+        s = s >> 21;
     }
 
     private static void printAll() {
