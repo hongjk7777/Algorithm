@@ -14,8 +14,9 @@ import java.util.StringTokenizer;
 public class BaekJoon_14226 {
     private static final int INT_MAX = 987654321, MAX = 1000;
     private static int s;
-    private static int[][] dp = new int[MAX + 1][MAX + 1];
+
     private static final boolean[][] visited = new boolean[MAX + 1][MAX + 1];
+    private static int[][] dp = new int[MAX + 1][MAX + 1];
 
     public static void main(String[] args) throws IOException {
         getInput();
