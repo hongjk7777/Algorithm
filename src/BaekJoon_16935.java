@@ -74,7 +74,9 @@ public class BaekJoon_16935 {
 
     private static void makeMapUpsideDown() {
         for (int row = 0; row < mapRow; row++) {
-            if (mapCol >= 0) System.arraycopy(tempMap[mapRow - 1 - row], 0, map[row], 0, mapCol);
+            for (int col = 0; col < mapCol; col++) {
+                map[row][col] = tempMap[mapRow - 1 - row][col];
+            }
         }
     }
     
