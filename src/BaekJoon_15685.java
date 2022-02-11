@@ -1,120 +1,137 @@
-import java.text.NumberFormat.Style;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class BaekJoon_15685 {
 
     private static int dragonCurveAmount;
+    private static final boolean[][] checked = new boolean[101][101];
     private static DragonCurve[] dCurveArr;
-    private static Square[][] squareArr;
-    private static int[] dx = {1, 0, -1, 0};
-    private static int[] dy = {0, -1, 0, 1};
 
     public static void main(String[] args) {
-        initialize();
         getInput();
+        makeAllDcurves();
         System.out.println(countSurroundedSquare());
     }
 
     private static void getInput(){
         Scanner scanner = new Scanner(System.in);
         dragonCurveAmount = scanner.nextInt();
+
+        dCurveArr = new DragonCurve[dragonCurveAmount];
         for (int i = 0; i < dragonCurveAmount; i++) {
             int startX = scanner.nextInt();
             int startY = scanner.nextInt();
             int dir = scanner.nextInt();
-            int genertaion = scanner.nextInt();
+            int generation = scanner.nextInt();
 
             DragonCurve dCurve = 
-            new DragonCurve(startX, startY, dir, genertaion);
+            new DragonCurve(startX, startY, dir, generation);
             dCurveArr[i] = dCurve;
         }
     }
 
-    private static void initialize(){
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                squareArr[i][j] = new Square();
-            }
-        }
-    }
-
-    private static class DragonCurve{
-        int[] x = new int[10000];
-        int[] y = new int[10000];
-        int[] dir = new int[10000];
-        int gen;
-        int curNum = 0;
-
-        public DragonCurve(int startX, int startY, int dir, int gen){
-            this.x[0] = startX;
-            this.y[0] = startY;
-            this.dir[0] = dir;
-            this.gen = gen;
-
-            makeFirstDCurve(startX, startY);
-            makeDCurve(startX, startY, gen);
-        }
-
-        private void makeDCurve(int startX, int startY, int gen){
-            
-            for (int i = 1; i < gen; i++) {
-                makeDCurveGen(startX, startY, gen);
-            }
-        }
-
-        private void makeFirstDCurve(int startX, int startY) {
-            x[curNum + 1] = x[curNum] + dx[dir[curNum]];
-            y[curNum + 1] = y[curNum] + dy[dir[curNum]];
-            
-            curNum++;
-        }
-
-        private void makeDCurveGen(int startX, int startY, int gen) {
-
-        }
-
-    }
-
-    public static class Square{
-        int up = 0;
-        int down = 0;
-        int left = 0;
-        int right = 0;
-
-        public void surround(int dir){
-            if(dir == 0){
-                up = 1;
-            } else if(dir == 1){
-                down = 1;
-            } else if(dir == 2){
-                left = 1;
-            } else if(dir == 3){
-                right = 1;
-            }
-        }
-
-        public boolean isSurrounded(){
-            boolean surrounded = false;
-            
-            if(up + down + left + right == 4){
-                surrounded = true;
-            }
-
-            return surrounded;
+    private static void makeAllDcurves() {
+        for (int i = 0; i < dragonCurveAmount; i++) {
+            dCurveArr[i].makeAllDCurve();
         }
     }
 
     private static int countSurroundedSquare() {
-        int count = 0;
-
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                if(squareArr[i][j].isSurrounded()){
-                    count++;
+        int num = 0;
+        for (int row = 0; row < 100; row++) {
+            for (int col = 0; col < 100; col++) {
+                if (isSurrounded(row, col)) {
+                    num++;
                 }
             }
         }
 
-        return count;
+        return num;
     }
+
+    private static boolean isSurrounded(int row, int col) {
+        return checked[row][col] && checked[row + 1][col] && checked[row][col + 1] && checked[row + 1][col + 1];
+    }
+
+    private static class DragonCurve{
+        int row, col, dir, gen;
+        private final int[] dRow = {1, 0, -1, 0};
+        private final int[] dCol = {0, -1, 0, 1};
+
+        ArrayList<Location> edges = new ArrayList<>();
+
+        public DragonCurve(int startRow, int startCol, int dir, int gen){
+            this.row = startRow;
+            this.col = startCol;
+            this.dir = dir;
+            this.gen = gen;
+        }
+
+        public void makeAllDCurve() {
+            makeFirstDCurve(row, col);
+            makeDCurves(0);
+        }
+
+        private void makeFirstDCurve(int startRow, int startCol) {
+            Location startLocation = new Location(startRow, startCol);
+            edges.add(startLocation);
+            checkLocation(startLocation);
+
+            int nextRow = startRow + dRow[dir];
+            int nextCol = startCol + dCol[dir];
+
+            Location nextLocation = new Location(nextRow, nextCol);
+            edges.add(nextLocation);
+            checkLocation(nextLocation);
+
+        }
+
+        private void makeDCurves(int curGen){
+
+            if (curGen == gen) return;
+            makeDCurve();
+            makeDCurves(curGen + 1);
+        }
+
+        private void makeDCurve() {
+            Location axis = edges.get(edges.size() - 1);
+
+            for (int i = edges.size() - 2; i >= 0; i--) {
+                Location temp = edges.get(i);
+                Location spinLocation = getSpin90Location(axis, temp);
+                checkLocation(spinLocation);
+                edges.add(spinLocation);
+            }
+        }
+
+        private Location getSpin90Location(Location axis, Location temp) {
+            int diffRow = temp.row - axis.row;
+            int diffCol = temp.col - axis.col;
+
+            int nextRow = axis.row - diffCol;
+            int nextCol = axis.col + diffRow;
+
+            return new Location(nextRow, nextCol);
+        }
+
+        private void checkLocation(Location location) {
+            int row = location.row;
+            int col = location.col;
+
+            if (!checked[row][col]) {
+                checked[row][col] = true;
+            }
+        }
+
+
+        private class Location {
+            int row, col;
+
+            public Location(int row, int col) {
+                this.row = row;
+                this.col = col;
+            }
+        }
+    }
+
 }
