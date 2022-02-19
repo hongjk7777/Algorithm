@@ -1,9 +1,15 @@
+/*
+아쉬운 점
+1. 문제 분류에 너무 집착해서 풀다 보니 쉬운 길을 돌아갔다
+ㄴ 문제 분류로만 풀려고 하지 말자
+2. 문제에는 알파벳 J까지 쓴다고 한 게 아니라 10개를 쓴다 했는데
+내맘대로 J까지로 정해서 풀다가 꽤 많이 틀렸다.
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.StringTokenizer;
 
 public class BaekJoon_1339 {
