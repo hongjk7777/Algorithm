@@ -36,7 +36,7 @@ public class BaekJoon_1806 {
 
     private static void findMinLengthToGoalSum() {
         //two pointer 방식을 이용
-        int startPointer = 0, endPointer = 0, minLength = 0;
+        int startPointer = 0, endPointer = 0;
         int curSum = sequence[0];
 
         while (startPointer < sequenceSize) {
