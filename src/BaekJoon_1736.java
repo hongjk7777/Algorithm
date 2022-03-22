@@ -26,7 +26,7 @@ public class BaekJoon_1736 {
             tokenizer = new StringTokenizer(reader.readLine());
             for (int col = 0; col < mapCol; col++) {
                 int input = Integer.parseInt(tokenizer.nextToken());
-                cleanArea[row][col] = input != 1;
+                cleanArea[row][col] = (input != 1);
             }
         }
     }
