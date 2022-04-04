@@ -46,13 +46,18 @@ public class BaekJoon_14925 {
                 colDP[row][col] = 1;
 
                 if (isInMap(row - 1, col)) {
-                    rowDP[row][col] = Math.max(rowDP[row][col], rowDP[row - 1][col] + 1);
-                    colDP[row][col] = Math.max(colDP[row][col], colDP[row - 1][col] + 1);
+                    rowDP[row][col] = Math.min(rowDP[row][col], rowDP[row - 1][col] + 1);
+                    colDP[row][col] = Math.min(colDP[row][col], colDP[row - 1][col]);
                 }
 
                 if (isInMap(row, col - 1)) {
-                    rowDP[row][col] = Math.max(rowDP[row][col], rowDP[row][col - 1] + 1);
-                    colDP[row][col] = Math.max(colDP[row][col], colDP[row][col - 1] + 1);
+                    rowDP[row][col] = Math.min(rowDP[row][col], rowDP[row][col - 1]);
+                    colDP[row][col] = Math.min(colDP[row][col], colDP[row][col - 1] + 1);
+                }
+
+                if (isInMap(row - 1, col - 1)) {
+                    rowDP[row][col] = Math.min(rowDP[row][col], rowDP[row - 1][col - 1] + 1);
+                    colDP[row][col] = Math.min(colDP[row][col], colDP[row - 1][col - 1] + 1);
                 }
 
             }
