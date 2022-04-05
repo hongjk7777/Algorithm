@@ -1,8 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class BaekJoon_14925 {
@@ -35,6 +33,8 @@ public class BaekJoon_14925 {
     }
 
     private static void makeDP() {
+        // dp[row][col]의 값을
+        // dp[row-1][col-1], dp[row-1][col], dp[row][col-1]을 통해 알아낸다
         for (int row = 0; row < mapRow; row++) {
             for (int col = 0; col < mapCol; col++) {
 
@@ -42,22 +42,20 @@ public class BaekJoon_14925 {
                     continue;
                 }
 
-                rowDP[row][col] = 1;
-                colDP[row][col] = 1;
+                if (isInMap(row - 1, col - 1)) {
+                    rowDP[row][col] = rowDP[row - 1][col - 1] + 1;
+                    colDP[row][col] = colDP[row - 1][col - 1] + 1;
+                } else{
+                    rowDP[row][col] = 1;
+                    colDP[row][col] = 1;
+                }
 
                 if (isInMap(row - 1, col)) {
                     rowDP[row][col] = Math.min(rowDP[row][col], rowDP[row - 1][col] + 1);
-                    colDP[row][col] = Math.min(colDP[row][col], colDP[row - 1][col]);
                 }
 
                 if (isInMap(row, col - 1)) {
-                    rowDP[row][col] = Math.min(rowDP[row][col], rowDP[row][col - 1]);
                     colDP[row][col] = Math.min(colDP[row][col], colDP[row][col - 1] + 1);
-                }
-
-                if (isInMap(row - 1, col - 1)) {
-                    rowDP[row][col] = Math.min(rowDP[row][col], rowDP[row - 1][col - 1] + 1);
-                    colDP[row][col] = Math.min(colDP[row][col], colDP[row - 1][col - 1] + 1);
                 }
 
             }
