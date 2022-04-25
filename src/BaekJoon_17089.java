@@ -46,26 +46,19 @@ public class BaekJoon_17089 {
 
     private static void findMin() {
         for (int num = 1; num <= peopleAmount; num++) {
-            dfs(1, num);
-        }
-    }
-
-    private static void dfs(int depth, int num) {
-        if (depth == 3) {
-            if (friends[num].contains(curFriend.get(0))) {
-                curFriend.add(num);
-                int sum = getSumOfFriends();
-                updateMin(sum);
-                curFriend.remove((Integer) num);
-            }
-            return;
-        }
-
-        for (int friendNum : friends[num]) {
-            if (!curFriend.contains(friendNum)) {
-                curFriend.add(num);
-                dfs(depth + 1, friendNum);
-                curFriend.remove((Integer) num);
+            for (int friend1Num = 0; friend1Num < friends[num].size(); friend1Num++) {
+                int friend1 = friends[num].get(friend1Num);
+                for (int friend2Num = friend1Num + 1; friend2Num < friends[num].size(); friend2Num++) {
+                    int friend2 = friends[num].get(friend2Num);
+                    if (friends[friend1].contains(friend2)) {
+                        curFriend.add(num);
+                        curFriend.add(friend1);
+                        curFriend.add(friend2);
+                        int sum = getSumOfFriends();
+                        updateMin(sum);
+                        curFriend.clear();
+                    }
+                }
             }
         }
     }
