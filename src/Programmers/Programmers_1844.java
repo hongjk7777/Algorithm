@@ -49,7 +49,7 @@ public class Programmers_1844 {
                         }
                         visited[nextRow][nextCol] = true;
                         queue.add(new Location(nextRow, nextCol, nextDist));
-                    } 
+                    }
                 }
             }
 
