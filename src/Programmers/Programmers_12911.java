@@ -1,6 +1,6 @@
 package Programmers;
 
-public class BaekJoon_12911 {
+public class Programmers_12911 {
     public static void main(String[] args) {
         new Solution().solution(15);
     }
